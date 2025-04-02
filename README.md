@@ -1,0 +1,1 @@
+Gerenciador de Funcionários feito em Java aplicando conceitos de DAO e MVC para persistência em arquivo na disciplina de Programação orientada a objetos III da UNIFAE, ministrado pela professora Cristiane Imamura.
