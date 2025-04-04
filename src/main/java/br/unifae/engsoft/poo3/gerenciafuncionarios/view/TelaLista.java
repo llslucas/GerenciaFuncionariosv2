@@ -1,8 +1,11 @@
 package br.unifae.engsoft.poo3.gerenciafuncionarios.view;
 
 import br.unifae.engsoft.poo3.gerenciafuncionarios.controller.FuncionarioController;
-import br.unifae.engsoft.poo3.gerenciafuncionarios.dao.FuncionarioArquivoDAO;
-import br.unifae.engsoft.poo3.gerenciafuncionarios.dao.FuncionarioMemoriaDAO;
+import br.unifae.engsoft.poo3.gerenciafuncionarios.model.Funcionario;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class TelaLista extends javax.swing.JFrame {
@@ -12,7 +15,14 @@ public class TelaLista extends javax.swing.JFrame {
   public TelaLista() {
     initComponents();
     controller = new FuncionarioController();
-    controller.abrirArquivo();
+
+    try {
+      controller.abrirArquivo();
+    } catch (FileNotFoundException ex) {
+      JOptionPane.showMessageDialog(null, "Falha ao abrir o arquivo.");
+      Logger.getLogger(TelaLista.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
   }
 
   @Override
@@ -201,9 +211,11 @@ public class TelaLista extends javax.swing.JFrame {
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
       String cod = txtCodigo.getText();
 
-      FuncionarioController funcionario = new FuncionarioController();
+      Funcionario funcionario = controller.buscar(cod);
 
-      funcionario.buscar(cod);
+      String message = funcionario != null ? funcionario.toString() : "Funcionario não encontrado";
+
+      JOptionPane.showMessageDialog(null, message);
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -211,20 +223,26 @@ public class TelaLista extends javax.swing.JFrame {
       String nome = txtNomeCad.getText();
       float salario = Float.parseFloat(txtSalarioCad.getText());
 
-      if (controller.cadastrar(cod, nome, salario)) {
-	JOptionPane.showMessageDialog(null, "Funcionário cadastrado com sucesso!");
-	txtCodigoCad.setText("");
-	txtNomeCad.setText("");
-	txtSalarioCad.setText("");
-      }else{
-	JOptionPane.showMessageDialog(null, "Falha ao salvar funcionário", "Erro", JOptionPane.ERROR_MESSAGE);
-      }
+      controller.cadastrar(cod, nome, salario);
+
+      JOptionPane.showMessageDialog(null, "Funcionário cadastrado com sucesso!");
+
+      txtCodigoCad.setText("");
+      txtNomeCad.setText("");
+      txtSalarioCad.setText("");
 
       controller.preencherTabela(tlbFuncionario);
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
-      FuncionarioController.salvarTudoNoArquivo();
+
+      try {
+	controller.salvarTudoNoArquivo();
+	JOptionPane.showMessageDialog(null, "Funcionário(s) salvo(s) como sucesso!");
+      } catch (IOException ex) {
+	JOptionPane.showMessageDialog(null, "Erro ao salvar o(s) funcionário(s)!");
+      }
+
       System.exit(0);
     }//GEN-LAST:event_btnSairActionPerformed
 

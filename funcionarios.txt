@@ -28,3 +28,9 @@ Testando
 9
 ttttt
 2000.0
+teste
+1234
+1234.0
+Teste2
+Testando
+12345.0
